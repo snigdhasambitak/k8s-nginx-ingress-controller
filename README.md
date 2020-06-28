@@ -153,9 +153,9 @@ If you would like to only use the Ingress Controller for a certain namespace, yo
 Set the `-watch-namespace` command line argument in the IC manifests.
 for example,`-watch-namespace=my-namespace` https://github.com/nginxinc/kubernetes-ingress/blob/master/docs/cli-arguments.md
 
-If you want to deploy a nginx ingress controller with RBAC enabled you can use [ingress-controller-cluster-scope-with-rbac](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/example_configs/ingress-controller-cluster-scope-with-rbac.yaml)
+## If you want to deploy a nginx ingress controller with RBAC enabled you can use [ingress-controller-cluster-scope-with-rbac](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/example_configs/ingress-controller-cluster-scope-with-rbac.yaml)
 
-If you want to deploy a nginx ingress controller without RBAC enabled you can use [ingress-controller-cluster-scope-without-rbac](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/example_configs/ingress-controller-namespace-scope-without-rbac.yaml)
+## If you want to deploy a nginx ingress controller without RBAC enabled you can use [ingress-controller-cluster-scope-without-rbac](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/example_configs/ingress-controller-namespace-scope-without-rbac.yaml)
 
 # How to deploy the Nginx Ingress Controller
 
