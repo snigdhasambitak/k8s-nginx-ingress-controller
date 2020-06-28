@@ -176,7 +176,7 @@ The nginx ingress controller can be deployed on any cloud provider `AWS`, `AZURE
   ```
 * The important Configurations can be found below:
 
-  # Source: [serviceaccount](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/-/blob/master/templates/controller-serviceaccount.yaml)
+  # Source: [serviceaccount](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/templates/controller-serviceaccount.yaml)
   ```
   apiVersion: v1
   kind: ServiceAccount
@@ -188,7 +188,7 @@ The nginx ingress controller can be deployed on any cloud provider `AWS`, `AZURE
     namespace: k8s-ingress-nginx
   ---
 ```
-  # Source: [controller-configmap](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/-/blob/master/templates/controller-configmap.yaml)
+  # Source: [controller-configmap](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/templates/controller-configmap.yaml)
 
   ```apiVersion: v1
   kind: ConfigMap
@@ -216,7 +216,7 @@ If the ingress controller is running in AWS we need to use the VPC IPv4 CIDR
 By using use-proxy-protocol Nginx uses the module ngx_http_realip_module reading the Forwarded IP and updating the remote_addr with the first IP (client IP). After this change, Nginx traces will displace client public IP instead of ELB IPs. It will only serve requests forwarded from you load balancer.
 
 
-  # Source: [controller-role](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/-/blob/master/templates/controller-role.yaml)
+  # Source: [controller-role](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/templates/controller-role.yaml)
 ```
   apiVersion: rbac.authorization.k8s.io/v1
   kind: Role
@@ -302,7 +302,7 @@ By using use-proxy-protocol Nginx uses the module ngx_http_realip_module reading
   ---
 ```
 
-  # Source: [controller-rolebinding](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/-/blob/master/templates/controller-rolebinding.yaml)
+  # Source: [controller-rolebinding](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/templates/controller-rolebinding.yaml)
 ```
   apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
@@ -322,7 +322,7 @@ By using use-proxy-protocol Nginx uses the module ngx_http_realip_module reading
       namespace: k8s-ingress-nginx
   ---
 ```
-  # Source: [controller-service](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/-/blob/master/templates/controller-service.yaml)
+  # Source: [controller-service](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/templates/controller-service.yaml)
 ```
   apiVersion: v1
   kind: Service
@@ -358,7 +358,7 @@ By using use-proxy-protocol Nginx uses the module ngx_http_realip_module reading
       app.kubernetes.io/part-of: ingress-nginx
   ---
 ```
-  # Source: [controller-deployment](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/-/blob/master/templates/controller-deployment.yaml)
+  # Source: [controller-deployment](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/templates/controller-deployment.yaml)
 ```
   apiVersion: apps/v1
   kind: Deployment
@@ -470,7 +470,7 @@ By using use-proxy-protocol Nginx uses the module ngx_http_realip_module reading
         #       secretName: ingress-nginx-admission
   ---
 ```
-# Source: [controller-NetworkPolicy](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/-/blob/master/templates/controller-networkPolicies.yaml)
+# Source: [controller-NetworkPolicy](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/templates/controller-networkPolicies.yaml)
 ```
   kind: NetworkPolicy
   apiVersion: networking.k8s.io/v1
@@ -816,7 +816,7 @@ For example :
 spec:
   rules:
   - host: external-nginx.example.com
-    http: &http_rules
+    http:
       paths:
       # - path: /nginx
       - backend:
