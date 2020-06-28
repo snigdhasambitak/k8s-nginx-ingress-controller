@@ -384,7 +384,7 @@ By using use-proxy-protocol Nginx uses the module ngx_http_realip_module reading
         # dnsPolicy: ClusterFirst
         containers:
           - name: controller
-            image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.31.1
+            image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.33.0
             imagePullPolicy: IfNotPresent
             lifecycle:
               preStop:
