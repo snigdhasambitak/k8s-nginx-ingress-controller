@@ -193,7 +193,8 @@ The nginx ingress controller can be deployed on any cloud provider `AWS`, `AZURE
     name: nginx-ingress-serviceaccount
     namespace: k8s-ingress-nginx
   ---
-```
+  ```
+  
   # Source: [controller-configmap](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/templates/controller-configmap.yaml)
 
   ```apiVersion: v1
@@ -213,7 +214,7 @@ The nginx ingress controller can be deployed on any cloud provider `AWS`, `AZURE
     <!-- proxy-real-ip-cidr: 10.11.12.13/22 -->
     use-forwarded-headers: 'true'
     use-proxy-protocol: "true"
-```
+  ```
 If `use-proxy-protocol` is enabled, proxy-real-ip-cidr defines the default the IP/network address of your external load balancer.
 
 
@@ -683,7 +684,7 @@ kubectl describe ingress test-ingress
 
 Name: test-ingress
 Namespace: k8s-layers-dev
-Address: internal-a4e0987ae1f544f6a8c120678678g788-12345678.us-east-1.elb.amazonaws.com
+Address: internal-a4e0987ae1f544f6a8c120678678g788-12345678.us-west-2.elb.amazonaws.com
 Default backend: default-http-backend:80 (<none>)
 Rules:
 Host Path Backends
