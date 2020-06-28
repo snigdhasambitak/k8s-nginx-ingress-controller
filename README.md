@@ -121,7 +121,7 @@ The Complete nginx_ingress_controller helm charts can be found in the following 
 
 https://github.com/snigdhasambitak/k8s-nginx-ingress-controller
 
-When getting started, people tend to create an ingress controller with default values and start to try things out, such as deploying the dashboard or migrating a few applications. This is very common and we did the same thing. In the beginning, everything was going smoothly, and we kept adding new environments into our Kubernetes cluster. Until suddenly, we hit our first routing issue. During this onboarding environments process, Nginx configuration quickly grows up to 200 thousand lines and starts to have config reload issues.
+When getting started, people tend to create an ingress controller with default values and start to try things out, such as deploying the dashboard or migrating a few applications.
 
 We took a close look at Nginx Ingress controller helm chart and it has the following settings:
 
@@ -152,6 +152,10 @@ If you would like to only use the Ingress Controller for a certain namespace, yo
 
 Set the `-watch-namespace` command line argument in the IC manifests.
 for example,`-watch-namespace=my-namespace` https://github.com/nginxinc/kubernetes-ingress/blob/master/docs/cli-arguments.md
+
+If you want to deploy a nginx ingress controller with RBAC enabled you can use [ingress-controller-cluster-scope-with-rbac](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/example_configs/ingress-controller-cluster-scope-with-rbac.yaml)
+
+If you want to deploy a nginx ingress controller without RBAC enabled you can use [ingress-controller-cluster-scope-without-rbac](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/example_configs/ingress-controller-namespace-scope-without-rbac.yaml)
 
 # How to deploy the Nginx Ingress Controller
 
