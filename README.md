@@ -683,7 +683,7 @@ kubectl describe ingress test-ingress
 
 Name: test-ingress
 Namespace: k8s-layers-dev
-Address: internal-a4e06a7ae1f544f6a8c1206199b82281-2108523565.us-east-1.elb.amazonaws.com
+Address: internal-a4e0987ae1f544f6a8c120678678g788-12345678.us-east-1.elb.amazonaws.com
 Default backend: default-http-backend:80 (<none>)
 Rules:
 Host Path Backends
