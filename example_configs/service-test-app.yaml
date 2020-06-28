@@ -1,0 +1,78 @@
+# Hello world Server Pod
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: service-test
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: service_test_pod
+  template:
+    metadata:
+      labels:
+        app: service_test_pod
+    spec:
+      # serviceAccount: nginx-ingress-serviceaccount
+      containers:
+      - name: simple-http
+        image: python:2.7
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash"]
+        args: ["-c", "echo \"<p>Hello from $(hostname)</p>\" > index.html; python -m SimpleHTTPServer 8080"]
+        ports:
+        - name: http
+          containerPort: 8080
+
+---
+# Hello world Server Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-test
+spec:
+  selector:
+    app: service_test_pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      name: http
+    - port: 443
+      protocol: TCP
+      name: https
+---
+
+# Hello world Server Ingress
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  # labels:
+  #   app.kubernetes.io/name: nginx-ingress
+  #   app.kubernetes.io/part-of: nginx-ingress
+  name: service-test
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: external-test.example.com
+    http:
+      paths:
+      # - path: /test
+      - backend:
+          serviceName: service-test
+          servicePort: 80
+
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: service-test-service
+spec:
+  podSelector:
+    matchLabels:
+      app: service_test_pod
+  ingress:
+  - {}
+---

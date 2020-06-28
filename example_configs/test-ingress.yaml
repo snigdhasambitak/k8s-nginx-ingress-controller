@@ -1,0 +1,139 @@
+# Hello world Server Ingress
+# Hello world Server Pod
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: service-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service_test_pod
+  template:
+    metadata:
+      labels:
+        app: service_test_pod
+    spec:
+      containers:
+      - name: simple-http
+        image: python:2.7
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash"]
+        args: ["-c", "echo \"<p>Hello from $(hostname)</p>\" > index.html; python -m SimpleHTTPServer 8080"]
+        ports:
+        - name: http
+          containerPort: 8080
+
+---
+# Hello world Server Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-test
+spec:
+  selector:
+    app: service_test_pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      name: http
+    - port: 443
+      protocol: TCP
+      name: https
+---
+
+# Nginx deployments
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      # serviceAccountName: nginx-ingress-serviceaccount
+      containers:
+      - name: echoserver
+        image: nginx
+        ports:
+        - containerPort: 80
+
+---
+
+# Nginx service
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    protocol: TCP
+    name: https
+  # - port: 443
+  #   targetPort: 80
+  selector:
+    app: nginx
+
+---
+# Hello world Server Ingress
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  # labels:
+  #   app.kubernetes.io/name: nginx-ingress
+  #   app.kubernetes.io/part-of: nginx-ingress
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # nginx.ingress.kubernetes.io/rewrite-target: /$5
+    kubernetes.io/ingress.class: "nginx"
+    # nginx.ingress.kubernetes.io/auth-tls-secret: "domain-cert"
+spec:
+  # serviceAccountName: nginx-ingress-serviceaccount
+  rules:
+  # - host: test.ingress-nginx.example.com
+  - http:
+      paths:
+      - path: /test
+        backend:
+          serviceName: service-test
+          servicePort: 80
+      - path: /nginx
+        backend:
+          serviceName: nginx
+          servicePort: 80
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: nginx-service
+spec:
+  podSelector:
+    matchLabels:
+      app: nginx
+  ingress:
+  - {}
+
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: service-test-service
+spec:
+  podSelector:
+    matchLabels:
+      app: service_test_pod
+  ingress:
+  - {}
+---
