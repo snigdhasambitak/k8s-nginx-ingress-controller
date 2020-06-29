@@ -194,7 +194,7 @@ The nginx ingress controller can be deployed on any cloud provider `AWS`, `AZURE
     namespace: k8s-ingress-nginx
   ---
   ```
-  
+
   # Source: [controller-configmap](https://github.com/snigdhasambitak/k8s-nginx-ingress-controller/blob/master/templates/controller-configmap.yaml)
 
   ```apiVersion: v1
@@ -717,15 +717,13 @@ LoadBalancer: curl -H 'Host:ingress-nginx.example.com' [ELB_DNS]
 ## Rewrite Targets
 Rewriting can be controlled using the following annotations:
 
-`nginx.ingress.kubernetes.io/rewrite-target` : `Target URI where the traffic must be redirected string`
-
-`nginx.ingress.kubernetes.io/ssl-redirect` : `Indicates if the location section is accessible SSL only (defaults to True when Ingress contains a Certificate) bool`
-
-`nginx.ingress.kubernetes.io/force-ssl-redirect` : `Forces the redirection to HTTPS even if the Ingress is not TLS Enabled	bool`
-
-`nginx.ingress.kubernetes.io/app-root` : `Defines the Application Root that the Controller must redirect if it's in '/' context	string`
-
-`nginx.ingress.kubernetes.io/use-regex` : `Indicates if the paths defined on an Ingress use regular expressions	bool`
+|Name|Description|Values|
+| --- | --- | --- |
+|nginx.ingress.kubernetes.io/rewrite-target|Target URI where the traffic must be redirected|string|
+|nginx.ingress.kubernetes.io/ssl-redirect|Indicates if the location section is accessible SSL only (defaults to True when Ingress contains a Certificate)|bool|
+|nginx.ingress.kubernetes.io/force-ssl-redirect|Forces the redirection to HTTPS even if the Ingress is not TLS Enabled|bool|
+|nginx.ingress.kubernetes.io/app-root|Defines the Application Root that the Controller must redirect if it's in '/' context|string|
+|nginx.ingress.kubernetes.io/use-regex|Indicates if the paths defined on an Ingress use regular expressions|bool|
 
 ### Examples
 
@@ -733,42 +731,40 @@ Rewriting can be controlled using the following annotations:
 
 Create an Ingress rule with a rewrite annotation:
 
-```
+```console
+$ echo '
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
- annotations:
- nginx.ingress.kubernetes.io/rewrite-target: /$2
- name: rewrite
- namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  name: rewrite
+  namespace: default
 spec:
- rules:
- - host: rewrite.bar.com
- http:
- paths:
- - backend:
- serviceName: http-svc
- servicePort: 80
- path: /something(/|$)(.*)
+  rules:
+  - host: rewrite.bar.com
+    http:
+      paths:
+      - backend:
+          serviceName: http-svc
+          servicePort: 80
+        path: /something(/|$)(.*)
+' | kubectl create -f -
+```
 
- ```
-
-In this ingress definition, any characters captured by (.* ) will be assigned to the placeholder $2, which is then used as a parameter in the rewrite-target annotation.
+In this ingress definition, any characters captured by `(.*)` will be assigned to the placeholder `$2`, which is then used as a parameter in the `rewrite-target` annotation.
 
 For example, the ingress definition above will result in the following rewrites:
 
-`rewrite.bar.com/something rewrites to rewrite.bar.com/`
-
-`rewrite.bar.com/something/ rewrites to rewrite.bar.com/`
-
-`rewrite.bar.com/something/new rewrites to rewrite.bar.com/new`
-
+- `rewrite.bar.com/something` rewrites to `rewrite.bar.com/`
+- `rewrite.bar.com/something/` rewrites to `rewrite.bar.com/`
+- `rewrite.bar.com/something/new` rewrites to `rewrite.bar.com/new`
 
 #### App Root
 
 Create an Ingress rule with a app-root annotation:
-
 ```
+$ echo "
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
@@ -785,8 +781,9 @@ spec:
           serviceName: http-svc
           servicePort: 80
         path: /
-
+" | kubectl create -f -
 ```
+
 Check the rewrite is working
 
 ```
@@ -798,7 +795,7 @@ Content-Type: text/html
 Content-Length: 162
 Location: http://stickyingress.example.com/app1
 Connection: keep-alive
-```        
+```
 
 # ingress + [external-dns](https://github.com/kubernetes-sigs/external-dns)
 
