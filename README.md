@@ -799,21 +799,9 @@ Location: http://stickyingress.example.com/app1
 Connection: keep-alive
 ```        
 
-# What problems does an nginx ingress controller solve?
+# ingress + [external-dns](https://github.com/kubernetes-sigs/external-dns)
 
-As we have already seen in the above use cases, an nginx ingress controller solves multiple things and it is quite useful when you have a k8s cluster.
-
-The Ingress resource supports the following features:
-
-* Content-based routing:
-   * `Host-based routing`: For example, routing requests with the host header foo.example.com to one group of services and the host header bar.example.com to another group.
-   * `Path-based routing` : For example, routing requests with the URI that starts with /serviceA to service A and requests with the URI that starts with /serviceB to service B.
-* TLS/SSL termination for each hostname, such as foo.example.com
-
-
-# ingress + external-dns
-
-external-dns.alpha.kubernetes.io/alias if set to true on an ingress, it will create an ALIAS record when the target is an ALIAS as well. To make the target an alias, the ingress needs to be configured correctly as described in the docs. In particular, the argument --publish-service=default/nginx-ingress-controller has to be set on the nginx-ingress-controller container. If one uses the nginx-ingress Helm chart, this flag can be set with the controller.publishService.enabled configuration option.
+`external-dns.alpha.kubernetes.io/alias` if set to true on an ingress, it will create an ALIAS record when the target is an ALIAS as well. To make the target an alias, the ingress needs to be configured correctly as described in the docs. In particular, the argument --publish-service=default/nginx-ingress-controller has to be set on the nginx-ingress-controller container. If one uses the nginx-ingress Helm chart, this flag can be set with the controller.publishService.enabled configuration option.
 
 You can either directly specify the hostname using in the hosts section of the ingress like the below example. ExternalDns will create a A record of your subdomian, pointing to the ELB of the Ingress nginx service.
 
@@ -835,7 +823,51 @@ Or if you want to use a global hostname for all of your ingress resources then y
 external-dns.alpha.kubernetes.io/hostname: ingress-nginx.example.com
 ```
 
-# Nginx Controller + GRPC services
+# What problems does an nginx ingress controller solve?
+
+As we have already seen in the above use cases, an nginx ingress controller solves multiple things and it is quite useful when you have a k8s cluster.
+
+The Ingress resource supports the following features:
+
+* Content-based routing:
+   * `Host-based routing`: For example, routing requests with the host header foo.example.com to one group of services and the host header bar.example.com to another group.
+   * `Path-based routing` : For example, routing requests with the URI that starts with /serviceA to service A and requests with the URI that starts with /serviceB to service B.
+* TLS/SSL termination for each hostname, such as foo.example.com or using the ELB of the ingress service
+
+# nginx controller other use-cases
+
+## Nginx Controller + Rate limiting
+
+These annotations define limits on connections and transmission rates.  These can be used to mitigate [DDoS Attacks](https://www.nginx.com/blog/mitigating-ddos-attacks-with-nginx-and-nginx-plus).
+
+* `nginx.ingress.kubernetes.io/limit-connections`: number of concurrent connections allowed from a single IP address. A 503 error is returned when exceeding this limit.
+* `nginx.ingress.kubernetes.io/limit-rps`: number of requests accepted from a given IP each second. The burst limit is set to 5 times the limit. When clients exceed this limit,  [limit-req-status-code](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#limit-req-status-code) ***default:*** 503 is returned.
+* `nginx.ingress.kubernetes.io/limit-rpm`: number of requests accepted from a given IP each minute. The burst limit is set to 5 times the limit. When clients exceed this limit,  [limit-req-status-code](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#limit-req-status-code) ***default:*** 503 is returned.
+* `nginx.ingress.kubernetes.io/limit-rate-after`: initial number of kilobytes after which the further transmission of a response to a given connection will be rate limited. This feature must be used with [proxy-buffering](#proxy-buffering) enabled.
+* `nginx.ingress.kubernetes.io/limit-rate`: number of kilobytes per second allowed to send to a given connection.  The zero value disables rate limiting. This feature must be used with [proxy-buffering](#proxy-buffering) enabled.
+* `nginx.ingress.kubernetes.io/limit-whitelist`: client IP source ranges to be excluded from rate-limiting. The value is a comma separated list of CIDRs.
+
+If you specify multiple annotations in a single Ingress rule, limits are applied in the order `limit-connections`, `limit-rpm`, `limit-rps`.
+
+To configure settings globally for all Ingress rules, the `limit-rate-after` and `limit-rate` values may be set in the [NGINX ConfigMap](./configmap.md#limit-rate).  The value set in an Ingress annotation will override the global setting.
+
+The client IP address will be set based on the use of [PROXY protocol](./configmap.md#use-proxy-protocol) or from the `X-Forwarded-For` header value when [use-forwarded-headers](./configmap.md#use-forwarded-headers) is enabled.
+
+## Nginx Controller + Authentication
+
+* Basic Authentication  
+https://kubernetes.github.io/ingress-nginx/examples/auth/basic/
+
+* Client Certificate Authentication
+https://kubernetes.github.io/ingress-nginx/examples/auth/client-certs/
+
+* External Basic Authentication
+https://kubernetes.github.io/ingress-nginx/examples/auth/external-auth/
+
+* External OUATH Authentication
+https://kubernetes.github.io/ingress-nginx/examples/auth/oauth-external-auth/
+
+## Nginx Controller + GRPC services
 
 An AWS Network Load Balancer functions at the fourth layer of the Open Systems Interconnection (OSI) model. It can handle millions of requests per second. After the load balancer receives a connection request, it selects a target from the target group for the default rule. It attempts to open a TCP connection to the selected target on the port specified in the listener configuration.
 
@@ -844,6 +876,10 @@ In general, a gRPC client establishes a TCP connection that it holds open for as
 The detailed example to achieve this is as follows:
 
 https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/grpc
+
+## Nginx Controller + Multi TLS certificate termination
+
+https://kubernetes.github.io/ingress-nginx/examples/multi-tls/
 
 # References
 
